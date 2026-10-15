@@ -816,3 +816,32 @@ body { background: #090907; }
   .site-shell .footer-display-name { margin: 38px 0 26px; font-size: clamp(52px, 13vw, 96px); }
   .site-shell .footer-bottom { align-items: flex-start; flex-direction: column; gap: 7px; padding-top: 15px; }
 }
+
+/* Clear preview status and ordering expectations without inventing shop policies. */
+.catalogue-note {
+  margin: 32px 0 0;
+  padding: 24px clamp(20px, 3vw, 38px);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  background: var(--panel);
+}
+.catalogue-note .eyebrow { margin-bottom: 8px; }
+.catalogue-note h3 {
+  margin: 0 0 9px;
+  color: var(--text);
+  font-size: clamp(23px, 3vw, 31px);
+  line-height: 1;
+}
+.catalogue-note > p:last-child {
+  max-width: 880px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.85;
+}
+.footer-bottom > span:last-child { max-width: 670px; text-align: right; }
+@media (max-width: 640px) {
+  .catalogue-note { margin-top: 25px; padding: 19px 16px; }
+  .catalogue-note > p:last-child { font-size: 10px; }
+  .footer-bottom > span:last-child { text-align: left; }
+}

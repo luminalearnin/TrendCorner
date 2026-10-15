@@ -109,7 +109,7 @@ export default function Home() {
         <span className="announcement-mark" aria-hidden="true">
           ✳
         </span>
-        <span>Shipping across India</span>
+        <span>Ask us about shipping</span>
       </div>
       <header className="site-header">
         <a
@@ -217,7 +217,8 @@ export default function Home() {
             <div>
               <p className="hero-description">
                 Everyday essentials with a little more attitude. Found in Assam.
-                Made to move wherever you do.
+                Message the store to check current availability and delivery
+                options.
               </p>
               <div className="hero-actions">
                 <a className="button button-primary" href="#collection">
@@ -304,7 +305,7 @@ export default function Home() {
                 <a
                   className="product-image-link"
                   href={whatsappLink(
-                    `Hi Trend Corner, I'm interested in the ${product.name} (${formatPrice(product.price)}). Could you share availability and sizes?`
+                    `Hi Trend Corner, I'm interested in the ${product.name}. Could you confirm current availability, sizes and price?`
                   )}
                   target="_blank"
                   rel="noreferrer"
@@ -330,6 +331,22 @@ export default function Home() {
                 <p className="product-detail">{product.detail}</p>
               </article>
             ))}
+          </div>
+          <div
+            className="catalogue-note reveal"
+            role="note"
+            aria-label="Catalogue and ordering information"
+          >
+            <p className="eyebrow">A note before you order</p>
+            <h3>Preview catalogue · WhatsApp orders</h3>
+            <p>
+              Product names, photos, descriptions and prices on this page are
+              illustrative demo content, not a live stock or price guarantee.
+              This catalogue has no cart or online checkout. Message the store
+              to confirm the actual item, availability, size and final price;
+              ask about delivery coverage, charges and timing, payment options,
+              and any return or exchange terms before paying.
+            </p>
           </div>
           <div className="collection-foot reveal">
             <span>Small-batch finds. Big main-character energy.</span>
@@ -432,7 +449,7 @@ export default function Home() {
               <span className="location-dot" />
               <span>Silapathar, Assam</span>
               <span className="location-separator">/</span>
-              <span>Shipping across India</span>
+              <span>Ask us about shipping</span>
             </div>
             <a
               className="button button-outline"
@@ -578,8 +595,8 @@ export default function Home() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} TREND CORNER</span>
           <span>
-            <b>DEMO</b> · sample products and prices · built by Vanguard Web
-            Agency
+            <b>PREVIEW</b> · sample products, prices, photos and contact details
+            · confirm with the store before ordering
           </span>
         </div>
       </footer>
