@@ -1,580 +1,385 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   Instagram,
+  MapPin,
   Menu,
-  MoveRight,
+  MessageCircle,
   X,
 } from "lucide-react";
-
-type Category = "All" | "Tees" | "Denim" | "Outerwear" | "Accessories";
-type Palette = "amber" | "forest";
+import ProductCard from "@/components/ProductCard";
+import {
+  instagramImage,
+  products,
+  type ProductCategory,
+} from "@/data/products";
+import "../storefront.css";
 
 const INSTAGRAM = "https://www.instagram.com/trendcorner_mes/";
 const WHATSAPP = "919101153092";
+const STORE_MAP =
+  "https://maps.google.com/?q=Madhuripathar%2C+Silapathar%2C+Likhabali+Road";
 
-const siteAsset = (name: string) => `${import.meta.env.BASE_URL}images/${name}`;
-
-const products = [
-  {
-    id: "tee-faith",
-    name: "Faith Washed Tee",
-    type: "Tees",
-    price: 1199,
-    detail: "Heavy cotton · Oversized fit",
-    image: siteAsset("tee-look.webp"),
-    alt: "Trend Corner editorial look featuring a warm ivory oversized streetwear tee",
-    label: "New drop",
-  },
-  {
-    id: "jeans-star",
-    name: "Star Wash Baggy Jeans",
-    type: "Denim",
-    price: 2199,
-    detail: "Rigid denim · Wide-leg fit",
-    image: siteAsset("baggy-denim.webp"),
-    alt: "Close-up editorial photograph of relaxed dark washed wide-leg denim",
-    label: "The fit",
-  },
-  {
-    id: "jkt-varsity",
-    name: "Varsity Bomber",
-    type: "Outerwear",
-    price: 3499,
-    detail: "Ribbed trim · Relaxed layer",
-    image: siteAsset("hero-sunset.webp"),
-    alt: "Layered charcoal streetwear against a dramatic amber dusk landscape",
-    label: "Last pieces",
-  },
-  {
-    id: "chain-cross",
-    name: "Cross Pendant Chain",
-    type: "Accessories",
-    price: 599,
-    detail: "Metal · 22 inch",
-    image: siteAsset("chain-accessories.webp"),
-    alt: "Silver-toned chain, dark metal rings and accessories on earth-brown stone",
-    label: "Finish the fit",
-  },
-];
-
-const categories: Category[] = [
-  "All",
-  "Tees",
-  "Denim",
-  "Outerwear",
-  "Accessories",
-];
 function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
 }
-function formatPrice(price: number) {
-  return `₹${price.toLocaleString("en-IN")}`;
-}
+
+const categories: Array<{ label: string; value: ProductCategory | "All" }> = [
+  { label: "All styles", value: "All" },
+  { label: "Tees", value: "Tees" },
+  { label: "Denim", value: "Denim" },
+  { label: "Shirts", value: "Shirts" },
+  { label: "Accessories", value: "Accessories" },
+];
 
 export default function Home() {
-  const [palette, setPalette] = useState<Palette>("amber");
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const [activeCategory, setActiveCategory] = useState<ProductCategory | "All">(
+    "All"
+  );
   const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    const targets = document.querySelectorAll<HTMLElement>(".reveal");
-    if (!("IntersectionObserver" in window)) {
-      targets.forEach(target => target.classList.add("is-visible"));
-      return;
-    }
-    const observer = new IntersectionObserver(
-      entries =>
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        }),
-      { threshold: 0.12 }
-    );
-    targets.forEach(target => observer.observe(target));
-    return () => observer.disconnect();
-  }, []);
   const visibleProducts = products.filter(
-    product => activeCategory === "All" || product.type === activeCategory
+    product => activeCategory === "All" || product.category === activeCategory
   );
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="site-shell" data-palette={palette} id="top">
-      <div className="announcement">
-        <span>From Silapathar, Assam</span>
-        <span className="announcement-mark" aria-hidden="true">
-          ✳
+    <div className="sf-site" id="top">
+      <div className="sf-announcement">
+        <span>Streetwear from Silapathar, Assam</span>
+        <span className="sf-announcement-separator" aria-hidden="true">
+          •
         </span>
-        <span>Ask us about shipping</span>
+        <span>Message us for sizes and delivery details</span>
       </div>
-      <header className="site-header">
+
+      <header className="sf-header">
         <a
-          className="brand-lockup"
+          className="sf-brand"
           href="#top"
           aria-label="Trend Corner home"
           onClick={closeMenu}
         >
-          <span className="brand-seal">TC</span>
-          <span className="brand-name">
-            Trend Corner<span>Streetwear, considered.</span>
+          <span className="sf-brand-mark" aria-hidden="true">
+            TC
+          </span>
+          <span className="sf-brand-copy">
+            <span className="sf-brand-name">TREND CORNER</span>
+            <span className="sf-brand-location">STREETWEAR · SILAPATHAR</span>
           </span>
         </a>
-        <button
-          className="menu-toggle"
-          type="button"
-          aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(open => !open)}
-        >
-          {menuOpen ? (
-            <X size={22} strokeWidth={1.5} />
-          ) : (
-            <Menu size={22} strokeWidth={1.5} />
-          )}
-        </button>
+
         <nav
-          className={`primary-nav${menuOpen ? " is-open" : ""}`}
+          className={`sf-nav${menuOpen ? " is-open" : ""}`}
           aria-label="Main navigation"
         >
           <a href="#collection" onClick={closeMenu}>
-            Collection
-          </a>
-          <a href="#story" onClick={closeMenu}>
-            Our corner
-          </a>
-          <a href="#contact" onClick={closeMenu}>
-            Find us
+            Shop all
           </a>
           <a
-            className="nav-instagram"
+            href="#collection"
+            onClick={() => {
+              setActiveCategory("Tees");
+              closeMenu();
+            }}
+          >
+            Tees
+          </a>
+          <a
+            href="#collection"
+            onClick={() => {
+              setActiveCategory("Denim");
+              closeMenu();
+            }}
+          >
+            Denim
+          </a>
+          <a href="#about" onClick={closeMenu}>
+            Our store
+          </a>
+          <a
+            className="sf-nav-instagram"
             href={INSTAGRAM}
             target="_blank"
             rel="noreferrer"
             aria-label="Trend Corner on Instagram"
           >
-            <Instagram size={16} strokeWidth={1.6} />
+            <Instagram size={17} />
+          </a>
+        </nav>
+
+        <div className="sf-header-actions">
+          <a
+            className="sf-header-whatsapp"
+            href={whatsappLink(
+              "Hi Trend Corner, can you share current collection, sizes and prices?"
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MessageCircle size={16} />
+            <span>WhatsApp us</span>
           </a>
           <button
-            className="palette-switch"
+            className="sf-menu-toggle"
             type="button"
-            onClick={() =>
-              setPalette(current => (current === "amber" ? "forest" : "amber"))
-            }
-            aria-label={`Switch to ${palette === "amber" ? "forest and citrus" : "charcoal and amber"} color palette`}
-            title="Compare the two color palettes"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(open => !open)}
           >
-            <span className="palette-dots" aria-hidden="true">
-              <i />
-              <i />
-            </span>
-            <span>{palette === "amber" ? "Try forest" : "Try amber"}</span>
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
-        </nav>
+        </div>
       </header>
 
       <main>
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-visual">
-            <img
-              className="hero-image"
-              src={siteAsset("hero-sunset.webp")}
-              alt="A lone streetwear model stands in an amber-lit grassland at dusk"
-              fetchPriority="high"
-            />
-            <div className="hero-image-shade" />
-            <div className="hero-overlay-copy">
-              <p className="eyebrow">
-                <span className="eyebrow-line" /> Independent streetwear · Est.
-                Silapathar
-              </p>
-              <h1 id="hero-title">
-                Wear
-                <br />
-                <em>your</em> own
-                <br />
-                story.
-              </h1>
+        <section className="sf-hero" aria-labelledby="sf-hero-title">
+          <img
+            className="sf-hero-photo"
+            src={instagramImage("2026-10-08-heavy-boxy-stonewash-rack.jpg")}
+            alt="Trend Corner's real clothing and denim collection displayed in the Silapathar store"
+            fetchPriority="high"
+          />
+          <div className="sf-hero-tint" aria-hidden="true" />
+          <div className="sf-hero-panel">
+            <p className="sf-eyebrow">
+              <span className="sf-eyebrow-mark" />
+              TREND CORNER · SILAPATHAR
+            </p>
+            <h1 id="sf-hero-title">
+              Wear your
+              <br />
+              <span>own story.</span>
+            </h1>
+            <p className="sf-hero-description">
+              Browse real tees, denim and everyday streetwear from our
+              collection.
+            </p>
+            <div className="sf-hero-actions">
+              <a className="sf-button sf-button-primary" href="#collection">
+                Explore the collection <ArrowRight size={16} />
+              </a>
+              <a
+                className="sf-button sf-button-plain"
+                href={whatsappLink(
+                  "Hi Trend Corner, please share your latest collection and current prices."
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ask on WhatsApp <ArrowUpRight size={15} />
+              </a>
             </div>
-            <div className="hero-image-note">
-              <span>THE NEW UNIFORM</span>
-              <span>TC / 001</span>
-            </div>
-            <span className="hero-orbit orbit-one" aria-hidden="true" />
-            <span className="hero-orbit orbit-two" aria-hidden="true" />
-            <a
-              className="hero-scroll"
-              href="#collection"
-              aria-label="Scroll to collection"
-            >
-              <ArrowDown size={16} />
-            </a>
-          </div>
-          <div className="hero-below">
-            <div>
-              <p className="hero-description">
-                Everyday essentials with a little more attitude. Found in Assam.
-                Message the store to check current availability and delivery
-                options.
-              </p>
-              <div className="hero-actions">
-                <a className="button button-primary" href="#collection">
-                  Explore the edit <ArrowRight size={16} />
-                </a>
-                <a
-                  className="text-link"
-                  href={whatsappLink(
-                    "Hi Trend Corner, I'd love to see your latest streetwear drops."
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Order on WhatsApp <ArrowUpRight size={15} />
-                </a>
-              </div>
-            </div>
-            <div className="hero-footnote">
-              <span className="footnote-mark">01</span>
-              <span>Easy layers. Strong presence.</span>
-            </div>
-          </div>
-        </section>
-
-        <div className="ticker" aria-label="Trend Corner, shipped across India">
-          <div className="ticker-track">
-            {Array.from({ length: 4 }, (_, index) => (
-              <span key={index}>
-                Dress on your terms <i>✳</i> Made for the everyday <i>✳</i>{" "}
-                Silapathar to everywhere <i>✳</i>
-              </span>
-            ))}
-          </div>
-        </div>
-        <section
-          className="collection section-wrap"
-          id="collection"
-          aria-labelledby="collection-title"
-        >
-          <div className="section-heading reveal">
-            <div>
-              <p className="eyebrow">The considered edit / 01</p>
-              <h2 id="collection-title">
-                Pieces with
-                <br />
-                <em>presence.</em>
-              </h2>
-            </div>
-            <p className="section-intro">
-              A little shape. A lot of character. Find your next everyday
-              favourite.
+            <p className="sf-hero-fineprint">
+              Prices and availability are confirmed by the store.
             </p>
           </div>
-          <div className="collection-toolbar">
+          <a
+            className="sf-photo-credit"
+            href="https://www.instagram.com/trendcorner_mes/p/DePUNesgV08/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            From Trend Corner on Instagram <ArrowUpRight size={13} />
+          </a>
+        </section>
+
+        <div className="sf-highlights" aria-label="How to shop">
+          <span>REAL PHOTOS FROM THE TREND CORNER FEED</span>
+          <span className="sf-highlight-dot" aria-hidden="true" />
+          <span>ASK THE STORE FOR PRICE & AVAILABILITY</span>
+          <span className="sf-highlight-dot" aria-hidden="true" />
+          <span>ORDER ENQUIRIES VIA WHATSAPP</span>
+        </div>
+
+        <section
+          className="sf-collection sf-content-width"
+          id="collection"
+          aria-labelledby="sf-collection-title"
+        >
+          <div className="sf-section-heading">
+            <div>
+              <p className="sf-eyebrow">The latest from our Instagram</p>
+              <h2 id="sf-collection-title">Shop the collection</h2>
+            </div>
+            <a
+              className="sf-text-link sf-desktop-link"
+              href={INSTAGRAM}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Follow @trendcorner_mes <ArrowUpRight size={15} />
+            </a>
+          </div>
+
+          <div className="sf-collection-toolbar">
             <div
-              className="filter-list"
+              className="sf-filter-list"
               role="group"
-              aria-label="Filter products by category"
+              aria-label="Filter by category"
             >
               {categories.map(category => (
                 <button
+                  key={category.value}
                   type="button"
-                  className={`filter-chip${activeCategory === category ? " is-active" : ""}`}
-                  key={category}
-                  aria-pressed={activeCategory === category}
-                  onClick={() => setActiveCategory(category)}
+                  className={`sf-filter${activeCategory === category.value ? " is-active" : ""}`}
+                  aria-pressed={activeCategory === category.value}
+                  onClick={() => setActiveCategory(category.value)}
                 >
-                  {category}
+                  {category.label}
                 </button>
               ))}
             </div>
-            <span className="item-count">
-              {String(visibleProducts.length).padStart(2, "0")} / EDITED
-              SELECTION
+            <span className="sf-results-count">
+              {visibleProducts.length}{" "}
+              {visibleProducts.length === 1 ? "style" : "styles"}
             </span>
           </div>
-          <div className="product-grid">
-            {visibleProducts.map((product, index) => (
-              <article
-                className="product-card reveal"
-                key={product.id}
-                style={{ transitionDelay: `${index * 70}ms` }}
-              >
-                <a
-                  className="product-image-link"
-                  href={whatsappLink(
-                    `Hi Trend Corner, I'm interested in the ${product.name}. Could you confirm current availability, sizes and price?`
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Ask about ${product.name} on WhatsApp`}
-                >
-                  <div className="product-image-frame">
-                    <img src={product.image} alt={product.alt} loading="lazy" />
-                    <span className="product-label">{product.label}</span>
-                    <span className="image-cta">
-                      <ArrowUpRight size={17} />
-                    </span>
-                  </div>
-                </a>
-                <div className="product-info">
-                  <div>
-                    <p className="product-type">{product.type} / TC EDIT</p>
-                    <h3>{product.name}</h3>
-                  </div>
-                  <span className="product-price">
-                    {formatPrice(product.price)}
-                  </span>
-                </div>
-                <p className="product-detail">{product.detail}</p>
-              </article>
+
+          <div className="sf-product-grid">
+            {visibleProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
-          <div
-            className="catalogue-note reveal"
-            role="note"
+
+          <aside
+            className="sf-catalogue-note"
             aria-label="Catalogue and ordering information"
           >
-            <p className="eyebrow">A note before you order</p>
-            <h3>Preview catalogue · WhatsApp orders</h3>
+            <span className="sf-note-icon" aria-hidden="true">
+              i
+            </span>
+            <div>
+              <h3>A catalogue, not checkout</h3>
+              <p>
+                Product photos and names link to public Trend Corner Instagram
+                posts. This site has no cart or online payment. Ask the store to
+                confirm current price, sizes, availability, delivery options,
+                payment methods and any return or exchange terms before
+                ordering.
+              </p>
+            </div>
+          </aside>
+        </section>
+
+        <section
+          className="sf-about"
+          id="about"
+          aria-labelledby="sf-about-title"
+        >
+          <a
+            className="sf-about-photo"
+            href="https://www.instagram.com/trendcorner_mes/p/DePUNesgV08/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="View Trend Corner's October 8 store collection post on Instagram"
+          >
+            <img
+              src={instagramImage("2026-10-08-denim-and-tees-rack.jpg")}
+              alt="Clothing, denim and accessories on display at Trend Corner"
+              loading="lazy"
+            />
+            <span>
+              INSIDE TREND CORNER <ArrowUpRight size={14} />
+            </span>
+          </a>
+          <div className="sf-about-copy">
+            <p className="sf-eyebrow">Our store · Madhuripathar</p>
+            <h2 id="sf-about-title">
+              Local roots.
+              <br />
+              <span>Everyday fits.</span>
+            </h2>
             <p>
-              Product names, photos, descriptions and prices on this page are
-              illustrative demo content, not a live stock or price guarantee.
-              This catalogue has no cart or online checkout. Message the store
-              to confirm the actual item, availability, size and final price;
-              ask about delivery coverage, charges and timing, payment options,
-              and any return or exchange terms before paying.
+              Find Trend Corner on Likhabali Road in Madhuripathar, Silapathar.
+              Browse the collection here, then message the store to check the
+              details before placing an order.
             </p>
-          </div>
-          <div className="collection-foot reveal">
-            <span>Small-batch finds. Big main-character energy.</span>
-            <a
-              href={whatsappLink(
-                "Hi Trend Corner, please send me your full product catalogue."
-              )}
-              target="_blank"
-              rel="noreferrer"
-              className="text-link"
-            >
-              Ask for the full edit <ArrowUpRight size={15} />
-            </a>
+            <div className="sf-about-actions">
+              <a
+                className="sf-button sf-button-primary"
+                href={STORE_MAP}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MapPin size={15} /> Find the store
+              </a>
+              <a
+                className="sf-text-link"
+                href={INSTAGRAM}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Visit Instagram <ArrowUpRight size={15} />
+              </a>
+            </div>
           </div>
         </section>
 
-        <section className="manifesto" aria-labelledby="manifesto-title">
-          <div className="manifesto-image-wrap reveal">
-            <img
-              src={siteAsset("tee-look.webp")}
-              alt="A relaxed streetwear look in a heavyweight ivory tee against a warm textured wall"
-              loading="lazy"
-            />
-            <span className="image-caption">
-              A BETTER KIND OF EVERYDAY / TC STUDIO
-            </span>
-          </div>
-          <div className="manifesto-copy reveal">
-            <p className="eyebrow">Not here to blend in / 02</p>
-            <h2 id="manifesto-title">
-              Good clothes.
-              <br />
-              <em>Good energy.</em>
-            </h2>
-            <p>
-              Trend Corner is for the ones who know their style doesn’t need
-              permission. From oversized tees to the details that finish a fit,
-              we bring together pieces made for showing up exactly as you are.
-            </p>
-            <a
-              href={INSTAGRAM}
-              target="_blank"
-              rel="noreferrer"
-              className="text-link"
-            >
-              Meet us on Instagram <ArrowUpRight size={15} />
-            </a>
-            <span className="manifesto-index" aria-hidden="true">
-              02 — 03
-            </span>
-          </div>
-        </section>
-        <section className="category-band" aria-labelledby="category-title">
-          <div className="category-heading reveal">
-            <p className="eyebrow">A wardrobe, your way / 03</p>
-            <h2 id="category-title">
-              Start with
-              <br />
-              <em>what moves you.</em>
-            </h2>
-          </div>
-          <div className="category-links">
-            {[
-              ["01", "The oversized tee", "Tees" as Category],
-              ["02", "The wide-leg denim", "Denim" as Category],
-              ["03", "The extra layer", "Outerwear" as Category],
-              ["04", "The finishing touch", "Accessories" as Category],
-            ].map(([number, label, category]) => (
-              <a
-                href="#collection"
-                className="category-link reveal"
-                key={number}
-                onClick={() => setActiveCategory(category as Category)}
-              >
-                <span className="category-number">{number}</span>
-                <span>{label}</span>
-                <MoveRight size={17} strokeWidth={1.5} />
-              </a>
-            ))}
-          </div>
-        </section>
         <section
-          className="story-section"
-          id="story"
-          aria-labelledby="story-title"
-        >
-          <div className="story-copy reveal">
-            <p className="eyebrow">Our corner of the world / 04</p>
-            <h2 id="story-title">
-              Rooted here.
-              <br />
-              <em>Worn everywhere.</em>
-            </h2>
-            <p>
-              Born in Madhuripathar, Silapathar. Built around good fits, easy
-              self-expression and making great streetwear a little closer to
-              home.
-            </p>
-            <div className="story-location">
-              <span className="location-dot" />
-              <span>Silapathar, Assam</span>
-              <span className="location-separator">/</span>
-              <span>Ask us about shipping</span>
-            </div>
-            <a
-              className="button button-outline"
-              href="https://maps.google.com/?q=Madhuripathar%2C+Silapathar%2C+Assam"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Find our corner <ArrowUpRight size={15} />
-            </a>
-          </div>
-          <div className="story-art reveal">
-            <div className="story-art-ring" aria-hidden="true" />
-            <span className="story-art-tc">TC</span>
-            <span className="story-art-caption">
-              A LITTLE OUT OF THE WAY.
-              <br />
-              RIGHT WHERE WE BELONG.
-            </span>
-            <span className="story-art-number">
-              26° 12′ N<br />
-              92° 00′ E
-            </span>
-          </div>
-        </section>
-        <section
-          className="contact-cta"
+          className="sf-contact"
           id="contact"
-          aria-labelledby="contact-title"
+          aria-labelledby="sf-contact-title"
         >
-          <div className="contact-inner reveal">
-            <p className="eyebrow">Your next favourite is one message away</p>
-            <h2 id="contact-title">
-              Make it
-              <br />
-              <em>yours.</em>
-            </h2>
+          <div>
+            <p className="sf-eyebrow">Need a size, price or delivery detail?</p>
+            <h2 id="sf-contact-title">Talk to the store.</h2>
             <p>
-              Ask about a piece, find your size, or just say hello. We’re right
-              here in Silapathar.
+              Send a quick WhatsApp message and confirm the details directly.
             </p>
-            <a
-              className="button button-dark"
-              href={whatsappLink(
-                "Hi Trend Corner, I'd like to know more about your collection."
-              )}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Start a WhatsApp chat <ArrowUpRight size={16} />
-            </a>
-            <a
-              className="contact-instagram"
-              href={INSTAGRAM}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Instagram size={16} /> @trendcorner_mes
-            </a>
           </div>
-          <span className="contact-stamp" aria-hidden="true">
-            TREND
-            <br />
-            CORNER
-            <br />
-            <i>ASSAM</i>
-          </span>
+          <a
+            className="sf-button sf-button-light"
+            href={whatsappLink(
+              "Hi Trend Corner, can you help me with product availability, size, price and delivery details?"
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MessageCircle size={16} /> WhatsApp · +91 91011 53092
+          </a>
         </section>
       </main>
 
-      <footer className="site-footer" id="footer">
-        <div className="footer-grid">
-          <div className="footer-intro">
-            <div className="footer-logo-mark">TC</div>
-            <div className="footer-wordmark">Trend Corner</div>
-            <div className="footer-kicker">SILAPATHAR · ASSAM</div>
-            <p>
-              Premium streetwear essentials.
-              <br />
-              Shipped across India.
-            </p>
+      <footer className="sf-footer">
+        <div className="sf-footer-main">
+          <div className="sf-footer-brand-block">
+            <a className="sf-brand sf-footer-brand" href="#top">
+              <span className="sf-brand-mark" aria-hidden="true">
+                TC
+              </span>
+              <span className="sf-brand-copy">
+                <span className="sf-brand-name">TREND CORNER</span>
+                <span className="sf-brand-location">
+                  STREETWEAR · SILAPATHAR
+                </span>
+              </span>
+            </a>
+            <p>Streetwear from Silapathar, Assam.</p>
           </div>
-          <div className="footer-column">
-            <h3>Shop</h3>
+          <div className="sf-footer-column">
+            <h2>Shop</h2>
             <a href="#collection" onClick={() => setActiveCategory("Tees")}>
               Tees
             </a>
             <a href="#collection" onClick={() => setActiveCategory("Denim")}>
-              Jeans
+              Denim
             </a>
-            <a
-              href="#collection"
-              onClick={() => setActiveCategory("Outerwear")}
-            >
-              Jackets
-            </a>
-            <a
-              href="#collection"
-              onClick={() => setActiveCategory("Accessories")}
-            >
-              Chains
+            <a href="#collection" onClick={() => setActiveCategory("Shirts")}>
+              Shirts
             </a>
             <a
               href="#collection"
               onClick={() => setActiveCategory("Accessories")}
             >
-              Rings
+              Accessories
             </a>
           </div>
-          <div className="footer-column">
-            <h3>Info</h3>
-            <a href="#contact">How to order</a>
-            <a
-              href="https://maps.google.com/?q=Madhuripathar%2C+Silapathar%2C+Assam"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Visit the store
+          <div className="sf-footer-column">
+            <h2>Find us</h2>
+            <a href={STORE_MAP} target="_blank" rel="noreferrer">
+              Madhuripathar, Silapathar
             </a>
-            <a href={INSTAGRAM} target="_blank" rel="noreferrer">
-              Instagram <ArrowUpRight size={13} />
-            </a>
-          </div>
-          <div className="footer-column">
-            <h3>Contact</h3>
-            <span>Madhuripathar, Silapathar, Assam</span>
             <a
               href={whatsappLink("Hi Trend Corner!")}
               target="_blank"
@@ -582,22 +387,14 @@ export default function Home() {
             >
               +91 91011 53092
             </a>
-            <a
-              href={whatsappLink("Hi Trend Corner!")}
-              target="_blank"
-              rel="noreferrer"
-            >
-              WhatsApp us <ArrowUpRight size={13} />
+            <a href={INSTAGRAM} target="_blank" rel="noreferrer">
+              Instagram <ArrowUpRight size={13} />
             </a>
           </div>
         </div>
-        <div className="footer-display-name">Trend Corner</div>
-        <div className="footer-bottom">
+        <div className="sf-footer-bottom">
           <span>© {new Date().getFullYear()} TREND CORNER</span>
-          <span>
-            <b>PREVIEW</b> · sample products, prices, photos and contact details
-            · confirm with the store before ordering
-          </span>
+          <span>Instagram-sourced catalogue · no online checkout</span>
         </div>
       </footer>
     </div>

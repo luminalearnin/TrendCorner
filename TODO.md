@@ -1,18 +1,18 @@
-# TODO — Trend Corner Luxury Streetwear Demo
+# TODO — Trend Corner Shopfront Refresh
 
-## Responsive luxury storefront
-- [x] Build a polished, responsive Trend Corner landing page for the streetwear brand in Silapathar, Assam, with apparel/accessories, India-wide shipping and direct WhatsApp ordering.
-- [x] Provide responsive navigation, contact details and a premium layout.
+## Visual direction and storefront layout
+- [x] Rebuild the dark editorial landing page as a clean, light, product-led streetwear storefront inspired by The Souled Store reference: white/soft-neutral surfaces, dark readable type and restrained red accent; retain Trend Corner's identity and use no reference-store assets.
+- [x] Provide responsive shop navigation and category browsing, with functioning Instagram and WhatsApp links; do not imply cart or online checkout exists.
 
-## Hero and collections
-- [x] Show “Wear your own story” over the landscape campaign image with the figure visible behind the text.
-- [x] Keep the image-and-headline hero together in a horizontal 16:9 landscape frame on desktop and mobile; place supporting copy and calls to action after the image frame for small-screen readability.
-- [x] Showcase oversized T-shirts, baggy jeans, jackets, chains, rings and related streetwear, with featured product cards and the Silapathar brand story.
+## Real collection imagery and verified product copy
+- [x] Use actual publicly visible collection photos from Trend Corner's Instagram posts, not generated fashion placeholders, and link each featured item back to its source post.
+- [x] Identify items only from public captions: “Heavy washed boxy tee” (14 Oct, limited drop); “Boxy fit Premium sunfade wash tee” (13 Oct, sizes S-M-L-XL); “Imp Barrel denims” (12 Oct, limited drop); “Heavy washed Ultra-Boxy denim shirt” (11 Oct, sizes M-L-XL); and “Heavy washed boxy tee” (10 Oct, sizes M-L-XL).
+- [x] Do not invent product prices, stock, shipping promises, payment methods or return/exchange policies; prompt customers to confirm details with the store.
 
-## Contact paths and interactions
-- [x] Provide prefilled WhatsApp ordering links and an Instagram link to the supplied profile.
-- [x] Add subtle 2D hover/reveal motion without 3D effects.
+## Customer contact and demo clarity
+- [x] Keep direct WhatsApp ordering at the public store number 9101153092, with prefilled inquiry messages.
+- [x] Keep the provided Trend Corner Instagram link.
+- [x] Clearly state this is a WhatsApp catalogue, not a cart/checkout, and shoppers should confirm price, availability, size, delivery and terms with the store.
 
-## Palette and footer
-- [x] Use charcoal, earth brown, burnt amber and warm ivory, with a forest-green/citrus-yellow comparison palette.
-- [x] Match the supplied footer reference with brand/shop/info/contact columns, an outlined “Trend Corner” wordmark, divider and demo/sample-products credit row.
+## Publishing
+- [x] Build the static site for the GitHub Pages `/TrendCorner/` subpath and bundle the real Instagram images locally.

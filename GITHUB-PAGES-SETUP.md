@@ -1,11 +1,11 @@
 # GitHub Pages setup for Trend Corner
 
-This repository keeps the editable website source in its original folders and publishes the compiled static site from the repository root. The repository's current Pages setting already publishes the `main` branch root, so no Pages setting change is needed.
+This repository keeps the editable website source in its original folders and publishes the compiled static site from the repository root. The repository's current Pages setting publishes the `main` branch root, so no Pages setting change is needed.
 
 ## How this repo is structured
 
 - `client/`, `server/`, `shared/`, and the root configuration files are the website source.
-- `client/public/images/` contains the four local WebP assets used by the site.
+- `client/public/images/instagram/` contains locally bundled copies of product and store photos from Trend Corner's public Instagram posts; product cards link back to their source posts.
 - Root `index.html`, `assets/`, `images/`, `favicon.svg`, and `api/` are the built files served by GitHub Pages.
 - `.nojekyll` tells GitHub Pages to publish the static build as-is.
 
@@ -34,6 +34,6 @@ pnpm dev:static
 
 Open `http://localhost:3000`.
 
-## Demo notes
+## Catalogue notes
 
-Product names, sample prices, contact details, and WhatsApp ordering links are demo content; confirm them with Trend Corner before launch. This static site has no product database or online checkout.
+The displayed names, sizes and dates are transcribed from the linked public Instagram posts; they may not reflect current stock. No prices, delivery promises, payment methods, or return/exchange terms are stated on the page. The site is a WhatsApp enquiry catalogue with no cart or online checkout; shoppers should confirm current details directly with the store.
