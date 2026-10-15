@@ -1,34 +1,31 @@
-# GitHub upload and Pages setup
+# GitHub Pages setup for Trend Corner
 
-This ZIP includes the Trend Corner website source, four local WebP images, and a GitHub Actions workflow. The export copy no longer relies on Manus-hosted image URLs. Preparing it did not change the original Webdev project or upload anything to GitHub.
+This repository keeps the editable website source in its original folders and publishes the compiled static site from the repository root. The repository's current Pages setting already publishes the `main` branch root, so no Pages setting change is needed.
 
-## Upload the files
+## How this repo is structured
 
-1. Download and **extract** this ZIP on your computer. Keep the folder structure intact; `package.json`, `client/`, `vite.config.ts`, and `.github/` should be at the extracted folder's top level. Do not upload the ZIP as a single file.
-2. Create a GitHub repository. If you plan to use GitHub Pages, check **Settings → Pages** to confirm Pages is available for your repository visibility and GitHub plan.
-3. Upload the extracted files using GitHub Desktop (recommended), or open a terminal in the extracted folder and run:
+- `client/`, `server/`, `shared/`, and the root configuration files are the website source.
+- `client/public/images/` contains the four local WebP assets used by the site.
+- Root `index.html`, `assets/`, `images/`, `favicon.svg`, and `api/` are the built files served by GitHub Pages.
+- `.nojekyll` tells GitHub Pages to publish the static build as-is.
 
-   ```bash
-   git init -b main
-   git add .
-   git commit -m "Add Trend Corner website"
-   git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPO.git
-   git push -u origin main
-   ```
+## Updating the published website
 
-   Replace `YOUR-USERNAME` and `YOUR-REPO` with your GitHub owner and repository name. GitHub Desktop is preferable to the web uploader because it reliably includes the hidden `.github/workflows/` folder.
+After changing source code or images, run from the repository root with Node.js 22 and pnpm 10.18.0:
 
-## Publish with GitHub Pages
+```bash
+pnpm install --frozen-lockfile
+GITHUB_ACTIONS=true GITHUB_REPOSITORY=luminalearnin/TrendCorner pnpm build:static
+cp -a dist/public/. .
+touch .nojekyll
+git add -A
+git commit -m "Update Trend Corner website"
+git push origin main
+```
 
-1. Open the repository's **Settings → Pages** and choose **GitHub Actions** as the deployment source.
-2. Push the files to `main`. The workflow at `.github/workflows/deploy-pages.yml` installs dependencies, builds the static site, and deploys `dist/public`.
-3. Check the workflow run under **Actions**. After it succeeds, GitHub shows the site URL in **Settings → Pages**.
+The build uses `/TrendCorner/` for asset URLs so it works at `https://luminalearnin.github.io/TrendCorner/`. GitHub Pages republishes the root build after the push.
 
-The build automatically uses the repository subpath (for example, `/YOUR-REPO/`) for project sites and `/` for an `owner.github.io` user/organization site. If GitHub does not offer Pages for a private repository on your plan, choose a Pages-eligible visibility or plan before publishing.
-
-## Run locally
-
-Install Node.js 22 and pnpm 10.18.0, then run:
+## Local preview
 
 ```bash
 pnpm install --frozen-lockfile
@@ -37,8 +34,6 @@ pnpm dev:static
 
 Open `http://localhost:3000`.
 
-## Important demo notes
+## Demo notes
 
-- Product names, sample prices, contact details and WhatsApp actions are part of the demo; verify them with Trend Corner before launch.
-- This static export does not include a product database or online payment checkout.
-- The ZIP is a source export only. It does not create a repository or upload files to GitHub for you.
+Product names, sample prices, contact details, and WhatsApp ordering links are demo content; confirm them with Trend Corner before launch. This static site has no product database or online checkout.
