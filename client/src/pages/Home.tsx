@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -6,9 +6,11 @@ import {
   MapPin,
   Menu,
   MessageCircle,
+  ShoppingBag,
   X,
 } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
+import CartDrawer, { type CartDisplayLine, type CartLine } from "@/components/CartDrawer";
 import {
   instagramImage,
   products,
@@ -20,6 +22,25 @@ const INSTAGRAM = "https://www.instagram.com/trendcorner_mes/";
 const WHATSAPP = "919101153092";
 const STORE_MAP =
   "https://maps.google.com/?q=Madhuripathar%2C+Silapathar%2C+Likhabali+Road";
+const CART_STORAGE_KEY = "trend-corner-preview-bag-v1";
+
+function loadCart(): CartLine[] {
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "[]");
+    if (!Array.isArray(stored)) return [];
+    return stored.flatMap((candidate): CartLine[] => {
+      if (!candidate || typeof candidate !== "object") return [];
+      const line = candidate as Partial<CartLine>;
+      const product = products.find(item => item.id === line.productId);
+      if (!product || typeof line.size !== "string" || !product.sizeOptions.includes(line.size)) return [];
+      const quantity = Number(line.quantity);
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) return [];
+      return [{ productId: product.id, size: line.size, quantity }];
+    });
+  } catch {
+    return [];
+  }
+}
 
 function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
@@ -38,10 +59,50 @@ export default function Home() {
     "All"
   );
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cart, setCart] = useState<CartLine[]>(loadCart);
+  const [cartOpen, setCartOpen] = useState(false);
   const visibleProducts = products.filter(
     product => activeCategory === "All" || product.category === activeCategory
   );
+  const cartLines: CartDisplayLine[] = cart.flatMap(line => {
+    const product = products.find(item => item.id === line.productId);
+    return product ? [{ ...line, product }] : [];
+  });
+  const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0);
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (productId: string, size: string) => {
+    setCart(current => {
+      const existing = current.find(line => line.productId === productId && line.size === size);
+      if (existing) return current.map(line => line === existing ? { ...line, quantity: Math.min(10, line.quantity + 1) } : line);
+      return [...current, { productId, size, quantity: 1 }];
+    });
+    setCartOpen(true);
+  };
+
+  const buyNow = (product: (typeof products)[number], size: string) => {
+    const message = `Hi Trend Corner, I'd like to order ${product.name}, size ${size}. The preview price shown is ₹${product.price}. Please confirm the current price, availability and delivery details.`;
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+  };
+
+  const updateQuantity = (line: CartLine, quantity: number) => {
+    setCart(current => quantity < 1
+      ? current.filter(item => !(item.productId === line.productId && item.size === line.size))
+      : current.map(item => item.productId === line.productId && item.size === line.size
+        ? { ...item, quantity: Math.min(10, quantity) }
+        : item));
+  };
+
+  const orderOnWhatsApp = () => {
+    const items = cartLines.map(line => `• ${line.product.name} — ${line.size} × ${line.quantity} — ₹${line.product.price}`).join("\n");
+    const subtotal = cartLines.reduce((sum, line) => sum + line.product.price * line.quantity, 0);
+    const message = `Hi Trend Corner, I'd like to enquire about these items:\n${items}\nPreview subtotal: ₹${subtotal}\nPlease confirm actual prices, availability and delivery details.`;
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="sf-site" id="top">
@@ -109,6 +170,16 @@ export default function Home() {
         </nav>
 
         <div className="sf-header-actions">
+          <button
+            className="sf-header-cart"
+            type="button"
+            onClick={() => setCartOpen(true)}
+            aria-label={`Open shopping bag, ${cartCount} items`}
+          >
+            <ShoppingBag size={18} />
+            <span>Bag</span>
+            <span className="sf-cart-count">{cartCount}</span>
+          </button>
           <a
             className="sf-header-whatsapp"
             href={whatsappLink(
@@ -171,7 +242,7 @@ export default function Home() {
               </a>
             </div>
             <p className="sf-hero-fineprint">
-              Prices and availability are confirmed by the store.
+              Preview pricing · availability may change
             </p>
           </div>
           <a
@@ -187,7 +258,7 @@ export default function Home() {
         <div className="sf-highlights" aria-label="How to shop">
           <span>REAL PHOTOS FROM THE TREND CORNER FEED</span>
           <span className="sf-highlight-dot" aria-hidden="true" />
-          <span>ASK THE STORE FOR PRICE & AVAILABILITY</span>
+          <span>PREVIEW PRICES · SIZES IN QUICK VIEW</span>
           <span className="sf-highlight-dot" aria-hidden="true" />
           <span>ORDER ENQUIRIES VIA WHATSAPP</span>
         </div>
@@ -238,28 +309,14 @@ export default function Home() {
 
           <div className="sf-product-grid">
             {visibleProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={(item, size) => addToCart(item.id, size)}
+                onBuyNow={(item, size) => buyNow(item, size)}
+              />
             ))}
           </div>
-
-          <aside
-            className="sf-catalogue-note"
-            aria-label="Catalogue and ordering information"
-          >
-            <span className="sf-note-icon" aria-hidden="true">
-              i
-            </span>
-            <div>
-              <h3>A catalogue, not checkout</h3>
-              <p>
-                Product photos and names link to public Trend Corner Instagram
-                posts. This site has no cart or online payment. Ask the store to
-                confirm current price, sizes, availability, delivery options,
-                payment methods and any return or exchange terms before
-                ordering.
-              </p>
-            </div>
-          </aside>
         </section>
 
         <section
@@ -394,9 +451,17 @@ export default function Home() {
         </div>
         <div className="sf-footer-bottom">
           <span>© {new Date().getFullYear()} TREND CORNER</span>
-          <span>Instagram-sourced catalogue · no online checkout</span>
+          <span>Preview prices · no online payment collected</span>
         </div>
       </footer>
+      <CartDrawer
+        open={cartOpen}
+        lines={cartLines}
+        onOpenChange={setCartOpen}
+        onQuantityChange={(line, quantity) => updateQuantity(line, quantity)}
+        onRemove={line => setCart(current => current.filter(item => !(item.productId === line.productId && item.size === line.size)))}
+        onOrderOnWhatsApp={orderOnWhatsApp}
+      />
     </div>
   );
 }
